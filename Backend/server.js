@@ -4,6 +4,7 @@ import connectDB from "./db/connectDB.js";  // Whenever you are importing any fi
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js"
 import postRoutes from "./routes/postRoutes.js"
+import { v2 as cloudinary } from "cloudinary"
 
 
 
@@ -20,6 +21,13 @@ const PORT = process.env.PORT || 5000;
 //     console.log(
 //         "Server started at http://localhost:5000")
 // });
+
+//CLOUDINARY
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
 //MiddleWares
 app.use(express.json());//to parse JSON data in the req.body

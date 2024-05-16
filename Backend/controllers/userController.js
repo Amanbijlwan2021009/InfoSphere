@@ -2,6 +2,7 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs"
 import generateTokenAndSetCookie from "../utils/helpers/generateTokenAndSetCookie.js";
 // import express from "express";
+import { v2 as cloudinary } from "cloudinary"
 
 
 const getUserProfile = async (req, res) => {
@@ -83,7 +84,7 @@ const signupUser = async (req, res) => {
             email,
             username,
             password: hashedPassword,
-           
+
         });
         await newUser.save();
 
@@ -223,7 +224,9 @@ const followUnfollowUser = async (req, res) => {
 }
 
 const updateUser = async (req, res) => {
-    const { name, email, password, username, profilePic, bio } = req.body
+    const { name, email, password, username, bio } = req.body
+    let { profilePic } = req.body
+
     const userId = req.user._id
     try {
         let user = await User.findById(userId);
@@ -237,18 +240,31 @@ const updateUser = async (req, res) => {
 
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
-
             user.password = hashedPassword
+        }
+
+        if (profilePic) {
+
+            if (user.profilePic) {//if user already have a profile Pic then we first delete it from the cloudinary
+                await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0])
+            }
+            const uploadedResponse = await cloudinary.uploader.upload(profilePic) // 
+            profilePic = uploadedResponse.secure_url;
 
         }
+
         user.name = name || user.name;
         user.email = email || user.email;
         user.username = username || user.username;
-        user.bio = bio || user.bio;
         user.profilePic = profilePic || user.profilePic;
+        user.bio = bio || user.bio;
 
         user = await user.save();
-        res.status(200).json({ message: "Profile Updated successfully", user })
+
+        // password should be null
+        user.password = null;
+
+        res.status(200).json({ user })
 
 
     } catch (error) {

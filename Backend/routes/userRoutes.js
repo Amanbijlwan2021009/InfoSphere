@@ -24,7 +24,7 @@ router.post("/follow/:id", protectRoute, followUnfollowUser)
 
 
 //Update:=>
-router.post("/update/:id", protectRoute, updateUser)
+router.put("/update/:id", protectRoute, updateUser)
 
 //update profile
 
