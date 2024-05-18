@@ -6,7 +6,7 @@ import protectRoute from "../middlewares/protectRoute.js"
 const router = express.Router();
 
 //Get Profile
-router.get("/profile/:username",getUserProfile)//i think we used "get" here , so that we can get all the details not sure about that  
+router.get("/profile/:query", getUserProfile)//i think we used "get" here , so that we can get all the details not sure about that  
 
 //SignUp
 router.post("/signup", signupUser)

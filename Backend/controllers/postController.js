@@ -1,5 +1,7 @@
 import User from "../models/userModel.js"
 import Post from "../models/postModel.js"
+import { v2 as cloudinary } from "cloudinary"
+
 
 //Get Post function
 const getPost = async (req, res) => {
@@ -20,7 +22,9 @@ const getPost = async (req, res) => {
 //Create Post function
 const createPost = async (req, res) => {
     try {
-        const { postedBy, text, img } = req.body;
+        const { postedBy, text } = req.body;
+        let { img } = req.body
+
         if (!postedBy || !text) {
             return res.status(400).json({ error: "Posted by and text fields are required" })
         }
@@ -36,7 +40,13 @@ const createPost = async (req, res) => {
 
         const maxLength = 500;
         if (text.length > maxLength) {
-            return res.status(400).json({ message: `Text must be less than ${maxLength} characters.` })
+            return res.status(400).json({ error: `Text must be less than ${maxLength} characters.` })
+        }
+
+        if (img) {
+            const uploadedResponse = await cloudinary.uploader.upload(img)
+            img = uploadedResponse.secure_url;
+
         }
 
         const newPost = new Post({ postedBy, text, img })
@@ -64,6 +74,12 @@ const deletePost = async (req, res) => {
             return res.status(401).json({ error: "Unauthorized to delete post " })//This checks whether you trying to delete your post or some other's post ... If someother's then it will not allow 
         }
 
+        //Previously we are only deleting this post from the database , BUT we are also using CLOUDINARY for storing images , so what if there is an image uploaded in the post , THEREFORE , we also need to delete it from the cloudinary
+
+        if (post.img) {
+            const imgId = post.img.split("/").pop().split(".")[0];
+            await cloudinary.uploader.destroy(imgId);
+        }
         await Post.findByIdAndDelete(req.params.id);
 
         res.status(200).json({ message: "Post deleted Successfully!" })
@@ -148,11 +164,27 @@ const getFeed = async (req, res) => {
         const following = user.following
         const feedPosts = await Post.find({ postedBy: { $in: following } }).sort({ createdAt: -1 })
 
-        res.status(200).json({ feedPosts })
+        res.status(200).json(feedPosts)
 
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
 }
 
-export { createPost, getPost, deletePost, likeUnlikePost, replyToPost, getFeed }
+const getUserPosts = async (req, res) => {
+    const { username } = req.params;
+    try {
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const posts = await Post.find({ postedBy: user._id }).sort({ createdAt: -1 });
+
+        res.status(200).json(posts);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+export { createPost, getPost, deletePost, likeUnlikePost, replyToPost, getFeed, getUserPosts }

@@ -9,10 +9,11 @@ import Header from "./components/Header";
 import LogoutButton from "./components/LogoutButton";
 import { useRecoilValue } from "recoil";
 import userAtom from "./atoms/userAtom";
+import CreatePost from "./components/CreatePost";
 // import  UserHeader  from "./components/UserHeader.jsx";
 
 
-function App() { 
+function App() {
 
   const user = useRecoilValue(userAtom)
   console.log(user)
@@ -35,7 +36,10 @@ function App() {
 
 
       </Routes>
+
       {user && <LogoutButton />}
+      {user && <CreatePost />}
+
     </Container>
   );
 }
