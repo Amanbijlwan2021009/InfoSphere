@@ -228,10 +228,10 @@ const updateUser = async (req, res) => {
     let { profilePic } = req.body
 
     const userId = req.user._id
+
     try {
         let user = await User.findById(userId);
         if (!user) return res.status(400).json({ error: "User not found.." })
-
         if (req.params.id !== userId.toString()) return res.status(400).json({ error: "You cannot update other user's profile" });
 
 
@@ -243,6 +243,8 @@ const updateUser = async (req, res) => {
             user.password = hashedPassword
         }
 
+
+        //Deleting profile pic from CLOUDINARY
         if (profilePic) {
 
             if (user.profilePic) {//if user already have a profile Pic then we first delete it from the cloudinary
@@ -264,7 +266,7 @@ const updateUser = async (req, res) => {
         // password should be null
         user.password = null;
 
-        res.status(200).json({ user })
+        res.status(200).json(user)
 
 
     } catch (error) {

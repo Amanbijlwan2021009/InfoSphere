@@ -15,7 +15,6 @@ import { useRecoilState } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import usePreviewImg from '../hooks/usePreviewImg';
 import useShowToast from '../hooks/useShowToast';
-// import BoxShadow from '../components/Box_Shadow';
 
 export default function UserProfilePage() {
 
@@ -26,16 +25,20 @@ export default function UserProfilePage() {
         email: user.email,
         bio: user.bio,
         password: "",
-    })
+    });
 
     const fileRef = useRef(null)//This is used in the change avatar section , to access input element defined through change avatar 'button'
+    const [updating, setUpadting] = useState(false)
 
-    const { handleImageChange, imgUrl } = usePreviewImg()
+    const { handleImageChange, imgUrl } = usePreviewImg();
 
     const showToast = useShowToast()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        if (updating) return
+        setUpadting(true);
+
         try {
             const res = await fetch(`/api/users/update/${user._id}`, {
                 method: "PUT",
@@ -47,17 +50,20 @@ export default function UserProfilePage() {
 
             const data = await res.json()//updated user object
             if (data.error) {
-                showToast("error", error, "error")
+                showToast("Error", data.error, "error")
                 return;
             }
 
-            showToast("Success", "Profile Updated Successfully", "Success")
+            showToast("Success", "Profile Updated Successfully", "success")
             setUser(data)
 
             localStorage.setItem("user-threads", JSON.stringify(data))
 
         } catch (error) {
-            showToast("error", error, "error")
+            showToast("Error", error, "error");
+        }
+        finally {
+            setUpadting(false)
         }
     }
 
@@ -165,7 +171,8 @@ export default function UserProfilePage() {
                             _hover={{
                                 bg: 'darkgreen',
                             }}
-                            type='submit'>
+                            type='submit'
+                            isLoading={updating}>
                             Submit
                         </Button>
                     </Stack>
