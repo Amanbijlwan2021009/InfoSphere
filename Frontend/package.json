@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "info",
+=======
+  "name": "social_media",
+>>>>>>> 0d00deef4c1f037fa075847f988ac901c685e54f
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -15,6 +19,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "date-fns": "^3.6.0",
+<<<<<<< HEAD
     "framer-motion": "^11.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -22,6 +27,14 @@
     "react-router-dom": "^6.23.1",
     "recoil": "^0.7.7",
     "socket.io-client": "^4.7.5"
+=======
+    "framer-motion": "^11.1.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.2.1",
+    "react-router-dom": "^6.23.0",
+    "recoil": "^0.7.7"
+>>>>>>> 0d00deef4c1f037fa075847f988ac901c685e54f
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

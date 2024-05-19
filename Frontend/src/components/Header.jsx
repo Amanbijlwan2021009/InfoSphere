@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Button, Flex, Image, Link, useColorMode } from "@chakra-ui/react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
@@ -68,3 +69,48 @@ const Header = () => {
 };
 
 export default Header;
+=======
+import { Flex, Image, Link, useColorMode } from '@chakra-ui/react';
+import { useRecoilValue } from 'recoil';
+import userAtom from '../atoms/userAtom';
+import { Link as RouterLink } from 'react-router-dom';
+import { AiFillHome } from "react-icons/ai"
+import { RxAvatar } from "react-icons/rx"
+
+
+const Header = () => {
+    const { colorMode, toggleColorMode } = useColorMode()
+    const user = useRecoilValue(userAtom)
+
+    return (
+        <Flex justifyContent={"space-between"} mt={6} mb="12">
+
+            {/* //This create an icon like button , that is linked to profile page  */}
+            {user && (
+                <Link as={RouterLink} to="/">
+                    <AiFillHome size={24} />
+                </Link>
+
+            )}
+
+            <Image
+                cursor={"pointer"}
+                alt="logo"
+                w={6}
+                src={colorMode === "dark" ? " /light-logo.svg" : "/dark-logo.svg"}
+                onClick={toggleColorMode}
+            />
+
+            {/* //This create an icon like button , that is linked to home page  */}
+            {user && (
+                <Link as={RouterLink} to={`/${user.username}`}>
+                    <RxAvatar size={24} />
+                </Link>
+
+            )}
+        </Flex>
+    )
+};
+
+export default Header;
+>>>>>>> 0d00deef4c1f037fa075847f988ac901c685e54f
